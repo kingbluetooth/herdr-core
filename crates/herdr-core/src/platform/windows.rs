@@ -1207,7 +1207,7 @@ fn parse_windows_command_line(target: &str) -> io::Result<Vec<std::ffi::OsString
     use windows_sys::Win32::UI::Shell::CommandLineToArgvW;
 
     // Leading whitespace otherwise produces an empty argv[0].
-    let target = target.trim_start_matches(|ch| ch == ' ' || ch == '\t');
+    let target = target.trim_start_matches([' ', '\t']);
     if target.is_empty() {
         return Err(io::Error::new(io::ErrorKind::InvalidInput, "empty --via command"));
     }
@@ -1266,7 +1266,7 @@ fn has_unterminated_quote(command_line: &str) -> bool {
 
 pub(crate) fn validate_via_target(target: &str) -> io::Result<()> {
     // Leading spaces/tabs are accepted, but control characters elsewhere remain invalid.
-    let normalized = target.trim_start_matches(|ch| ch == ' ' || ch == '\t');
+    let normalized = target.trim_start_matches([' ', '\t']);
     if normalized.is_empty() || normalized.chars().any(char::is_control) {
         return Err(io::Error::new(io::ErrorKind::InvalidInput, "one line, no control characters"));
     }

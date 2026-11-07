@@ -1354,6 +1354,16 @@ mod machine_connection_tests {
             assert_eq!(parsed[3], "hi");
         }
         assert!(validate_via_target(" \t cmd.exe /c echo hi").is_ok());
+
+        let paths = crate::paths::Paths::from_env().unwrap();
+        for target in ["   cmd.exe /c echo hi", "\t\tcmd.exe /c echo hi"] {
+            let cmd = machine_command(&paths, target, true, &[], "remote line").unwrap();
+            assert_eq!(cmd.get_program(), std::ffi::OsStr::new("cmd.exe"));
+            assert_eq!(
+                cmd.get_args().collect::<Vec<_>>(),
+                [" /c", "echo", "hi", "remote line"].iter().map(std::ffi::OsStr::new).collect::<Vec<_>>()
+            );
+        }
     }
 
     #[test]

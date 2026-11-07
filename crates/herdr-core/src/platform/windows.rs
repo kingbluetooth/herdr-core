@@ -1345,7 +1345,7 @@ mod machine_connection_tests {
     use super::*;
 
     #[test]
-    fn via_parser_trims_leading_spaces_and_tabs() {
+    fn via_command_builder_trims_leading_spaces_and_tabs() {
         for target in ["   cmd.exe /c echo hi", "\t\tcmd.exe /c echo hi"] {
             let parsed = parse_windows_command_line(target).unwrap();
             assert_eq!(parsed[0], "cmd.exe");
@@ -1361,7 +1361,12 @@ mod machine_connection_tests {
             assert_eq!(cmd.get_program(), std::ffi::OsStr::new("cmd.exe"));
             assert_eq!(
                 cmd.get_args().collect::<Vec<_>>(),
-                [" /c", "echo", "hi", "remote line"].iter().map(std::ffi::OsStr::new).collect::<Vec<_>>()
+                [
+                    std::ffi::OsStr::new("/c"),
+                    std::ffi::OsStr::new("echo"),
+                    std::ffi::OsStr::new("hi"),
+                    std::ffi::OsStr::new("remote line"),
+                ]
             );
         }
     }
